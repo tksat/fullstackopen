@@ -84,3 +84,19 @@ const App = () => {
 
 export default App
 ```
+
+### 【メモ】　関数を返す関数の省略
+```
+//通常の記述
+const hello = () => {
+  const handler = () => console.log('hello word')
+  return handler
+}
+
+//省略その1
+const hello = () =>
+  return () => console.log('hello word')
+
+//省略その2
+const hello = () => () => {console.log('hello word')}
+```
