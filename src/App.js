@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import History from './History'
 
 const App = () => {
   const [clicks, setClicks] = useState({
@@ -22,7 +23,7 @@ const App = () => {
       <button onClick={handleClickLeft}>left</button>
       <button onClick={handleClickRight}>right</button>
       {clicks.right}
-      <p>{clickHistory.join(' ')}</p>
+      <History clickHistory={clickHistory} />
     </div>
   )
 }
