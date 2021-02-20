@@ -30,3 +30,57 @@ export default App
 ```
 
 ### stateをひとつにまとめて管理する
+```
+import React, { useState } from 'react'
+
+const App = () => {
+  const [clicks, setCliks] = useState({
+    left: 0, right: 0
+  })
+
+  return (
+    <div>
+      {clicks.left}
+      <button onClick={() => setCliks({ ...clicks, left: clicks.left + 1 })}>left</button>
+      <button onClick={() => setCliks({ ...clicks, right: clicks.right + 1 })}>right</button>
+      {clicks.right}
+    </div>
+  )
+}
+
+export default App
+```
+
+### useStateの配列処理
+```
+import React, { useState } from 'react'
+
+const App = () => {
+  const [clicks, setClicks] = useState({
+    left: 0, right: 0
+  })
+  const [clickHistory, setClickHistory] = useState([])
+
+  const handleClickLeft = () => {
+    setClicks({ ...clicks, left: clicks.left + 1 })
+    setClickHistory(clickHistory.concat('L'))
+  }
+
+  const handleClickRight = () => {
+    setClicks({ ...clicks, right: clicks.right + 1 })
+    setClickHistory(clickHistory.concat('R'))
+  }
+
+  return (
+    <div>
+      {clicks.left}
+      <button onClick={handleClickLeft}>left</button>
+      <button onClick={handleClickRight}>right</button>
+      {clicks.right}
+      <p>{clickHistory.join(' ')}</p>
+    </div>
+  )
+}
+
+export default App
+```
