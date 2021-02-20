@@ -7,6 +7,10 @@ const App = () => {
   })
   const [clickHistory, setClickHistory] = useState([])
 
+  const Button = ({ onClick, text }) => {
+    return <button onClick={onClick}>{text}</button>
+  }
+
   const handleClickLeft = () => {
     setClicks({ ...clicks, left: clicks.left + 1 })
     setClickHistory(clickHistory.concat('L'))
@@ -20,8 +24,8 @@ const App = () => {
   return (
     <div>
       {clicks.left}
-      <button onClick={handleClickLeft}>left</button>
-      <button onClick={handleClickRight}>right</button>
+      <Button onClick={handleClickLeft} text={"left"} />
+      <Button onClick={handleClickRight} text={"right"} />
       {clicks.right}
       <History clickHistory={clickHistory} />
     </div>
