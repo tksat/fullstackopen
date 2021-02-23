@@ -150,3 +150,28 @@ npm install axios
 npm install json-server --save-dev
 ```
 パラメータには微妙な違いがあります。プログラムの実行にはライブラリの存在が必要なため、axiosはアプリケーションの実行時依存関係としてインストールされます。一方、json-serverは、プログラム自体が必要としないため、開発依存関係（--save-dev）としてインストールされました。これは、ソフトウェア開発中の支援に使用されます。コースの次の部分では、さまざまな依存関係について詳しく説明します。
+
+### useEffectで外部からデータを取得
+
+```javascript
+//useEffectを追加
+import React, { useState, useEffect } from 'react'
+//axiosを追加
+import axios from 'axios'
+
+const NoteList = () => {
+  const [notes, setNotes] = useState([])
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
+
+  const hook = () => {
+    console.log('useEffect')
+    axios.get('http://localhost:3001/notes')
+      .then(res => setNotes(res.data))
+  }
+
+  //第2引数に空配列を渡すと、マウント時に外部データを取得
+  useEffect(hook,[])
+
+  ・・・省略
+```
