@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import noteServer from '../servers/notes'
 import Note from './Note'
 
 const NoteList = () => {
@@ -8,8 +8,8 @@ const NoteList = () => {
   const [showAll, setShowAll] = useState(true)
 
   const hook = () => {
-    axios.get('http://localhost:3001/notes')
-      .then(res => setNotes(res.data))
+    noteServer.getall()
+      .then(res => setNotes(res))
   }
 
   useEffect(hook, [])
@@ -23,9 +23,9 @@ const NoteList = () => {
       id: notes.length + 1
     }
 
-    axios.post('http://localhost:3001/notes', newObj)
+    noteServer.create(newObj)
       .then(res => {
-        setNotes(notes.concat(newObj))
+        setNotes(notes.concat(res))
         setNewNote('')
       })
   }
@@ -37,13 +37,13 @@ const NoteList = () => {
   const notesToShow = showAll ? notes : notes.filter(note => note.important === true)
 
   const toggleImpotance = id => {
-    const url = `http://localhost:3001/notes/${id}`
     const note = notes.find(n => n.id === id)
     const changedNote = { ...note, important: !note.important }
 
-    axios.put(url, changedNote).then(response => {
-      setNotes(notes.map(note => note.id !== id ? note : response.data))
-    })
+    noteServer.update(id, changedNote)
+      .then(res => {
+        setNotes(notes.map(note => note.id !== id ? note : res))
+      })
   }
 
   return (

@@ -227,3 +227,84 @@ const Note = ({ note, toggleImpotance }) => {
   )
 }
 ```
+
+## バックエンドとの通信を別のモジュールに抽出する
+サーバー関連で、メモを処理するプロパティとして
+3つの関数を外部にまとめる
+
+```javascript:src/servers/notes.js
+import axios from 'axios'
+const baseUrl = 'http://localhost:3001/notes'
+
+const getall = () => {
+  const request = axios.get(baseUrl)
+  return request.then(res => res.data)
+}
+
+const create = (newObj) => {
+  const request = axios.post(baseUrl, newObj)
+  return request.then(res => res.data)
+}
+
+const update = (id, newObj) => {
+  const request = axios.put(`${baseUrl}/${id}`, newObj)
+  return request.then(res => res.data)
+}
+
+export default { getall, create, update }
+```
+
+```javascript:src/components/NoteList.js
+const NoteList = () => {
+
+  //getをの書き換えを変更
+  const hook = () => {
+    noteServer.getall()
+      .then(res => setNotes(res.data))
+  }
+
+  useEffect(hook, [])
+
+  const addNote = event => {
+    event.preventDefault()
+    const newObj = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      id: notes.length + 1
+    }
+
+    //postをの書き換えを変更
+    noteServer.create(newObj)
+      .then(res => {
+        setNotes(notes.concat(res.data))
+        setNewNote('')
+      })
+  }
+
+  const handleChange = e => {
+    setNewNote(e.target.value)
+  }
+
+  const notesToShow = showAll ? notes : notes.filter(note => note.important === true)
+
+  const toggleImpotance = id => {
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    //putをの書き換えを変更
+    noteServer.update(id, changedNote)
+      .then(res => {
+        setNotes(notes.map(note => note.id !== id ? note : res.data))
+      })
+  }
+
+  return (
+    ・・・ 省略
+  )
+}
+
+export default NoteList
+
+//
+```
