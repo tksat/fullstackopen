@@ -40,9 +40,13 @@ const NoteList = () => {
     const note = notes.find(n => n.id === id)
     const changedNote = { ...note, important: !note.important }
 
-    noteServer.update(id, changedNote)
-      .then(res => {
+    noteServer
+      .update(id, changedNote).then(res => {
         setNotes(notes.map(note => note.id !== id ? note : res))
+      })
+      .chatch(error => {
+        alert(`the note '${note.content}' was already deleted from server`)
+        setNotes(notes.filter(note => note.id !== id))
       })
   }
 
