@@ -153,7 +153,7 @@ npm install json-server --save-dev
 
 ### useEffectで外部からデータを取得
 
-```javascript
+```javascript:NoteList.js
 //useEffectを追加
 import React, { useState, useEffect } from 'react'
 //axiosを追加
@@ -174,4 +174,56 @@ const NoteList = () => {
   useEffect(hook,[])
 
   ・・・省略
+```
+
+## サーバーのデータを変更する
+### postでjsonサーバーにデータを追加する
+
+addNoteにpostを追記していきます
+```javascript:NoteList.js
+  const addNote = event => {
+    event.preventDefault()
+    const newObj = {
+      content: newNote,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5,
+      id: notes.length + 1
+    }
+
+    //postでjsonサーバーに追加します
+    axios.post('http://localhost:3001/notes', newObj)
+      .then(res => {
+        setNotes(notes.concat(newObj))
+        setNewNote('')
+      })
+  }
+```
+
+### putでjsonサーバーにデータを変更する
+
+```javascript:NoteList.js
+
+//idが一致したデータを書き換える
+ const toggleImpotance = id => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(note => note.id !== id ? note : response.data))
+    })
+  }
+
+```
+
+```javascript:NoteList.js:Note.js
+const Note = ({ note, toggleImpotance }) => {
+  const label = note.important ? '重要です' : '重要ではありません'
+  return (
+    <li>
+      {note.content}
+      <button onClick={() => toggleImpotance(note.id)}>{label}</button>
+    </li>
+  )
+}
 ```
