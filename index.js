@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
 
+//データを追加できる設定
+app.use(express.json())
+
 let notes = [
   {
     id: 1,
@@ -22,15 +25,58 @@ let notes = [
   }
 ]
 
+//Hello word!が表示される
 app.get('/', (req, res) => {
   res.send('<h1>Hello word!</h1>')
 })
 
+//notesのデータ一式をjson形式で表示
 app.get('/api/notes', (req, res) => {
-  res.json(notes)
+  if (notes) {
+    res.json(notes)
+  } else {
+    res.status(404).end()
+  }
 })
 
-const PORT = 3001
+//指定のデータのみ抽出し、json形式で表示
+app.get('/api/notes/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const note = notes.find(note => note.id === id)
+  res.json(note)
+})
+
+//指定のデータのみ削除する
+app.delete('/api/notes/:id', (req, res) => {
+  const id = Number(req.params.id)
+  notes = notes.filter(note => note.id !== id)
+  res.status(204).end()
+})
+
+//データを追加する
+const generateId = () => {
+  const maxId = notes.length > 0 ? Math.max(...notes.map(note => note.id)) : 0
+  return maxId + 1
+}
+
+app.post('/api/notes', (req, res) => {
+  const body = req.body
+
+  if (!body.content) {
+    return res.status(400).json({ error: 'content mossing' })
+  }
+
+  const note = {
+    id: generateId(),
+    content: body.content,
+    date: new Date(),
+    important: body.important || false
+  }
+  notes.concat(note)
+  res.json(note)
+})
+
+const PORT = 3000
 app.listen(PORT, () => {
   console.log(`${PORT}ポートでwebサーバーが起動しています!`)
 })

@@ -108,3 +108,113 @@ Webアプリケーションを構築するためのアーキテクチャスタ�
 GET、POST、PUT、DELETE等のHTTP標準のメソッドを使うことで、
 シンプルで一貫性のあるリクエスト標準化が円滑に行える。
 [Qiita RESTfull API参照記事](https://qiita.com/NagaokaKenichi/items/0647c30ef596cedf4bf2)
+
+```javascript
+//Hello word!が表示される
+app.get('/', (req, res) => {
+  res.send('<h1>Hello word!</h1>')
+})
+
+//notesのデータ一式をjson形式で表示
+app.get('/api/notes', (req, res) => {
+  if (notes) {
+    res.json(notes)
+  } else {
+    res.status(404).end()
+  }
+})
+
+//指定のデータのみ抽出し、json形式で表示
+app.get('/api/notes/:id', (req, res) => {
+  const id = Number(req.params.id)
+  const note = notes.find(note => note.id === id)
+  res.json(note)
+})
+
+//指定のデータのみ削除する
+app.delete('/api/notes/:id', (req, res) => {
+  const id = Number(req.params.id)
+  notes = notes.filter(note => note.id !== id)
+  res.status(204).end()
+})
+```
+
+### Postmanで確認する
+[Postman](https://www.postman.com/)
+delete・putはPostmanで確認テストができる
+
+my work space > 新規タブ > urlを選択し、delte or put を選択する
+実行に成功すると右下に204が表示される
+
+アプリケーションのメモのみに保存されるので、再起動するとものに戻る
+
+### Visual studioならもっと簡単
+
+#### REST Client
+https://marketplace.visualstudio.com/items?itemName=humao.rest-client
+
+プラグインをインストールすると、その使用は非常に簡単です。
+アプリケーションのルートにrequestsという名前のディレクトリを作成します。
+すべてのRESTクライアント要求を.rest拡張子で終わるファイルとしてディレクトリに保存します。
+
+```javascript:requests/get_all_notes.rest
+GET http://localhost:3000/api/notes/
+```
+エディターでget_all_notes.restを開くと、"GET"の上部に「Send Request」の表示をクリック。
+RESTクライアントがHTTPリクエストを実行し、サーバーからのレスポンスがエディターで開かれます。
+
+## データと追加できるようにする
+
+```javascript
+const express = require('express')
+const app = express()
+
+//データを追加できる設定
+app.use(express.json())
+
+//・・・省略
+
+//データを追加する
+// スプレット構文でnotesを配列にする処理がされている
+const generateId = () => {
+  const maxId = notes.length > 0 ? Math.max(...notes.map(note => note.id)) : 0
+  return maxId + 1
+}
+
+app.post('/api/notes', (req, res) => {
+  const body = req.body
+
+  // contentの無いようがなかったらエラーを返す
+  if (!body.content) {
+    return res.status(400).json({ error: 'content mossing' })
+  }
+
+  const note = {
+    id: generateId(),
+    content: body.content,
+    date: new Date(),
+    important: body.important || false
+  }
+  notes.concat(note)
+  res.json(note)
+})
+
+const PORT = 3000
+app.listen(PORT, () => {
+  console.log(`${PORT}ポートでwebサーバーが起動しています!`)
+})
+
+```
+
+### REST ClientでPOSTを確認する
+
+```javascript:requests/create_note.rest
+POST http://localhost:3000/api/notes/
+Content-Type: application/json
+
+{
+  "content": "local",
+  "important": true
+}
+```
+「Send Request」をクリックすると右側にアプリケーションが正しく受信できているか確認できます。
