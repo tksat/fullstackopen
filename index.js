@@ -4,6 +4,17 @@ const app = express()
 //データを追加できる設定
 app.use(express.json())
 
+//ミドルウェア
+const requestLogger = (req, res, next) => {
+  console.log('Method:', req.method)
+  console.log('Path:  ', req.path)
+  console.log('Body:  ', req.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
 let notes = [
   {
     id: 1,
@@ -75,6 +86,12 @@ app.post('/api/notes', (req, res) => {
   notes.concat(note)
   res.json(note)
 })
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
 
 const PORT = 3000
 app.listen(PORT, () => {

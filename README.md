@@ -218,3 +218,46 @@ Content-Type: application/json
 }
 ```
 「Send Request」をクリックすると右側にアプリケーションが正しく受信できているか確認できます。
+
+## ミドルウェア
+
+### ミドルウェアとは
+ミドルウェアとは、リクエストオブジェクトとレスポンスオブジェクトを受け取り、任意の処理を行う関数です。
+複数のミドルウェアを同時に使用することもできる。
+app.useは上から順に実行されていくので書き順にちゅういする。
+
+▼読み込み時に実行
+
+```javascript
+const express = require('express')
+const app = express()
+
+app.use(express.json())
+
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
+// 省略・・・
+```
+
+▼読み込み後に実行
+```javascript
+// 省略・・・
+const unknownEndpoint = (req, res) => {
+  res.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const PORT = 3000
+app.listen(PORT, () => {
+  console.log(`${PORT}ポートでwebサーバーが起動しています!`)
+})
+```
