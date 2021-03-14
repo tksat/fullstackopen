@@ -1,5 +1,8 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
+
+app.use(cors())
 
 //データを追加できる設定
 app.use(express.json())
@@ -93,7 +96,7 @@ const unknownEndpoint = (req, res) => {
 
 app.use(unknownEndpoint)
 
-const PORT = 3000
+const PORT = 3001
 app.listen(PORT, () => {
   console.log(`${PORT}ポートでwebサーバーが起動しています!`)
 })
