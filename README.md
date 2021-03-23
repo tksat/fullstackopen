@@ -38,13 +38,27 @@ web: node index.js
 ```
 const PORT = process.env.PORT || 3001
 ```
-### Herokuアプリを作成
+### Herokuアプリケーションの新規作成
 Herokuのソースコードを受け取れるようにします。
 アプリを作成すると、heroku​ という名前の git リモートリポジトリも作成され、ローカルの git リポジトリと関連付けられます。
 ```
-heroku create
+heroku create {好きな名前}
 ```
-### コードをデプロイ
+### コードをherokuにデプロイ（masterブランチにいる場合）
 ```
-git push heroku main
+git push heroku master
+```
+
+### コードをherokuにデプロイ（他のブランチにいる場合）
+```
+git push heroku <現在いるブランチ名>:master
+```
+
+### herokuの接続先URLを変更する
+```
+//herokuのulrを変更
+git remote set-url heroku https://git.heroku.com/samplecode.git
+
+//remoteで登録できたか確認
+git remote -v
 ```
