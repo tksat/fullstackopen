@@ -14,7 +14,6 @@ npm start
 ## ミドルウェアcorsで、他のオリジンからのリクエストを許可する
 ```
 npm install cors
-
 ```
 ミドルウェアを使用して、すべてのオリジンからの要求を許可します。
 
@@ -38,6 +37,11 @@ web: node index.js
 ```
 const PORT = process.env.PORT || 3001
 ```
+### Herokuにログイン
+```
+heroku login
+```
+
 ### Herokuアプリケーションの新規作成
 Herokuのソースコードを受け取れるようにします。
 アプリを作成すると、heroku​ という名前の git リモートリポジトリも作成され、ローカルの git リポジトリと関連付けられます。
