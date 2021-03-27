@@ -4,6 +4,9 @@ const app = express()
 
 app.use(cors())
 
+//データをbuildディレクトリから参照する
+app.use(express.static('build'))
+
 //データを追加できる設定
 app.use(express.json())
 
