@@ -89,7 +89,7 @@ app.post('/api/notes', (req, res) => {
     date: new Date(),
     important: body.important || false
   }
-  notes.concat(note)
+  notes = notes.concat(note)
   res.json(note)
 })
 
